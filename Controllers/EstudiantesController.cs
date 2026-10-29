@@ -25,11 +25,15 @@ public class EstudiantesController(EstudianteService service) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(EstudianteRecord record)
     {
+        if (await service.ExisteMatriculaAsync(record.Matricula))
+        {
+            return Conflict($"La matrícula {record.Matricula} ya está registrada.");
+        }
+
         var nuevoId = await service.SaveAsync(record);
         var creado = record with { IdEstudiante = nuevoId };
         return CreatedAtAction(nameof(GetById), new { id = nuevoId }, creado);
     }
-
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, EstudianteRecord record)
     {

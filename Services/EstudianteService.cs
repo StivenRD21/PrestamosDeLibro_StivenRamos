@@ -65,4 +65,11 @@ public class EstudianteService(IConfiguration configuration)
         var sql = "DELETE FROM Estudiantes WHERE IdEstudiante = @Id;";
         return await connection.ExecuteAsync(sql, new { Id = id });
     }
+    public async Task<bool> ExisteMatriculaAsync(string matricula)
+    {
+        using var connection = new SqliteConnection(_connectionString);
+        var sql = "SELECT COUNT(1) FROM Estudiantes WHERE Matricula = @Matricula;";
+        var count = await connection.ExecuteScalarAsync<int>(sql, new { Matricula = matricula });
+        return count > 0;
+    }
 }
